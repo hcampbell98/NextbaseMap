@@ -2,4 +2,6 @@
 *.MP4
 *.txt
 *.html
+*.pyc
 output/
+test_video/
