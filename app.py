@@ -3,7 +3,6 @@ from Mapper import Map
 
 video_paths = [
     'test_video\\video1.MP4',
-    'test_video\\video2.MP4',
     # 'video3.MP4',
 ]
 

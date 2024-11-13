@@ -1,5 +1,7 @@
 # Project Documentation
 
+https://i.hcampbell.dev/ckal2nuu5z.mp4
+
 ## Overview
 
 This project processes GPS data from video files and plots it on an interactive map using the **folium** library. The map displays the vehicle's path with a gradient of colors based on speed and allows for animated playback of the vehicle's movement over time.
