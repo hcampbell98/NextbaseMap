@@ -1,6 +1,6 @@
 # Project Documentation
 
-https://i.hcampbell.dev/ckal2nuu5z.mp4
+[](demo.mp4)
 
 ## Overview
 
