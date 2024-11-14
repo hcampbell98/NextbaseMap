@@ -71,8 +71,10 @@ class Map:
         green_diff = max_color[1] - min_color[1]
         blue_diff = max_color[2] - min_color[2]
     
-        # Calculate the proportion of the speed within the range
-        proportion = (speed - min_speed) / (max_speed - min_speed)
+        if max_speed != min_speed:
+            proportion = (speed - min_speed) / (max_speed - min_speed)
+        else:
+            proportion = 0  # or any other default value you prefer
     
         # Apply a quadratic transformation to skew towards green
         skewed_proportion = proportion ** 2
@@ -221,9 +223,20 @@ class Map:
         return map
     
     @classmethod
-    def from_videos(cls, videos):
+    def from_videos(cls, videos, log=False):
         map = cls()
+
+        if log:
+            print(f"Plotting {len(videos)} videos...")
+
         for video in videos:
-            map.plot_gps_data(video.get_gps_data())
+            print(f"Plotting video {video.path}...")
+
+            try:
+                map.plot_gps_data(video.get_gps_data())
+            except MissingDataError as e:
+                print(f"Error: {e}")
+                continue
+            
         map.add_vehicle_position()
         return map

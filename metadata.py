@@ -16,22 +16,31 @@ class GPS:
     
     @classmethod
     def from_dict(cls, data, mph=False):
-        return cls(
-            data['GPSLatitude'],
-            data['GPSLongitude'],
-            data['GPSAltitude'],
-            round(float(data['GPSSpeed']), 2) if not mph else round(float(data['GPSSpeed']) * 0.621371, 2),
-            data['GPSTrack'],
-            data['GPSDate/Time']
-        )
+        try:
+            return cls(
+                data['GPSLatitude'],
+                data['GPSLongitude'],
+                data['GPSAltitude'],
+                round(float(data['GPSSpeed']), 2) if not mph else round(float(data['GPSSpeed']) * 0.621371, 2),
+                data['GPSTrack'],
+                data['GPSDate/Time']
+            )
+        except KeyError as e:
+            return None
 
 
 class GPSVideo:
     gps_data = []
-    def __init__(self, path):
+    et = None
+
+    def __init__(self, exiftool, path, log=False):
         self.path = path
+        self.et = exiftool
         self.gps_data = self.processGPS()
     
+        if log:
+            print(f"Extracted GPS data from {path}")
+
     def processGPS(self):
         """
         Extracts GPS data from a video file using ExifTool.
@@ -40,13 +49,15 @@ class GPSVideo:
             A list of GPS objects containing the extracted data.
         """
 
-        with exiftool.ExifTool() as et:
-            result = et.execute(self.path, '-ee')
-            result = result.replace("[QuickTime]     ", "")
+        result = self.et.execute(self.path, '-ee')
+        result = result.replace("[QuickTime]     ", "")
 
         data = result.split('Sample Duration')[1:]
         gps_data = []
         
+        # Only keep every 10th section
+        data = [data[i] for i in range(0, len(data), 10)]
+
         for section in data:
             lines = section.split('\n')
             gps = {}
@@ -57,6 +68,10 @@ class GPSVideo:
                     key = key.replace(' ', '')
                     gps[key] = value.strip()
             gps_data.append(GPS.from_dict(gps, True))
+
+        # Remove any None values
+        gps_data = [gps for gps in gps_data if gps]
+
         return gps_data
 
     def get_gps_data(self):
